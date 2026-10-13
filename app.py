@@ -6,6 +6,9 @@ from openai import OpenAI
 
 load_dotenv()
 
+# Groq retired llama-3.3-70b-versatile and llama-3.1-8b-instant on 16 Aug 2026.
+DEFAULT_MODEL = "openai/gpt-oss-120b"
+
 st.set_page_config(
     page_title="AI Student & Career Assistant",
     page_icon="logo.png",
@@ -243,6 +246,7 @@ if "messages" not in st.session_state:
 st.title("🎓 AI Student & Career Assistant")
 st.caption("Your companion for learning, study planning, and career preparation.")
 
+
 def select_welcome_task(task_name, prompt_text):
     st.session_state["task_selector"] = task_name
     st.session_state["pending_prompt"] = prompt_text
@@ -253,10 +257,10 @@ with st.sidebar:
     st.markdown("### AI Student & Career Assistant")
     st.header("Assistant settings")
     task = st.selectbox(
-    "Choose a task",
-    list(TASKS.keys()),
-    key="task_selector",
-)
+        "Choose a task",
+        list(TASKS.keys()),
+        key="task_selector",
+    )
 
     if not st.session_state.messages:
         st.markdown(
@@ -339,7 +343,7 @@ if prompt:
         except (KeyError, FileNotFoundError):
             api_key = None
 
- model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+    model = os.getenv("GROQ_MODEL", DEFAULT_MODEL)
 
     if not api_key:
         st.error("Groq API key not found. Add GROQ_API_KEY to Streamlit Cloud Secrets.")
@@ -402,3 +406,5 @@ if prompt:
                 "Check your API key, model availability, internet "
                 "connection, and Groq usage limits."
             )
+            st.caption(f"Model used: {model}")
+            st.caption(f"Details: {exc}")
